@@ -1,48 +1,55 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
+  /* --------- CORE --------- */
 
-   /* --------- CORE --------- */
-
-  --color-background: #0F172A;
-  --color-surface: #1E293B;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
   --color-surface-2: #334155;
 
-  --color-text: #F8FAFC;
-  --color-muted: #CBD5E1;
+  --color-text: #f8fafc;
+  --color-muted: #cbd5e1;
 
   /* --------- GAMEPLAY --------- */
 
-  --color-card-back: #2563EB;
-  --color-card-back-hover: #3B82F6;
+  --color-card-back: #2563eb;
+  --color-card-back-hover: #3b82f6;
 
-  --color-question: #FACC15;
-  --color-question-glow: #FDE047;
+  --color-question: #facc15;
+  --color-question-glow: #fde047;
 
-  --color-timer: #22D3EE;
-  --color-timer-danger: #F97316;
+  --color-timer: #22d3ee;
+  --color-timer-danger: #f97316;
+
+  /* --------- EFFECTS --------- */
+
+  --perspective-card: 1000px;
+
+  --shadow-card: 0 10px 20px rgba(0, 0, 0, 0.3);
+
+  --shadow-card-hover: 0 0 20px rgba(59, 130, 246, 0.45);
+
+  --shadow-question: 0 0 10px rgba(253, 224, 71, 0.6);
 
   /* --------- MODALS --------- */
 
-  --color-modal: #1E293B;
+  --color-modal: #1e293b;
   --color-modal-border: #334155;
 
   /* --------- FEEDBACK --------- */
 
-  --color-success: #22C55E;
-  --color-success-bg: #052E16;
+  --color-success: #22c55e;
+  --color-success-bg: #052e16;
 
-  --color-error: #EF4444;
-  --color-error-bg: #450A0A;
+  --color-error: #ef4444;
+  --color-error-bg: #450a0a;
 
   /* --------- CTA --------- */
 
-  --color-primary: #EC4899;
-  --color-primary-hover: #F472B6;
-  --color-primary-active: #DB2777;
+  --color-primary: #ec4899;
+  --color-primary-hover: #f472b6;
+  --color-primary-active: #db2777;
 
-  
-  
   --animate-slide-down: slide-down 0.7s ease-out;
   --animate-slide-up: slide-up 0.7s ease-out;
   --animate-bounce-once: bounce-once 0.5s ease;
@@ -70,7 +77,8 @@
   }
 
   @keyframes bounce-once {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     30% {
@@ -83,4 +91,21 @@
       transform: translateY(-4px);
     }
   }
+}
+
+.flip-card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.flip-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  backface-visibility: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
 }

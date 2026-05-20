@@ -1,5 +1,6 @@
 import { useState } from "react"
 import StartScreen from "./screens/StartScreen"
+import GameScreen from "./screens/GameScreen"
 
 function App() {
   const [screen, setScreen] = useState("start")
@@ -11,11 +12,7 @@ function App() {
       )}
 
       {screen === "game" && (
-        <section className="min-h-screen p-6">
-          <h2 className="mb-6 text-3xl font-bold">
-            Game screen
-          </h2>
-        </section>
+       <GameScreen />
       )}
     </main>
   )
