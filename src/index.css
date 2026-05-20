@@ -50,6 +50,12 @@
   --color-primary-hover: #f472b6;
   --color-primary-active: #db2777;
 
+  /* --------- Secondary Actions ---------- */
+
+  --color-secondary: #334155;
+  --color-secondary-hover: #475569;
+  --color-secondary-active: #1e293b;
+
   --animate-slide-down: slide-down 0.7s ease-out;
   --animate-slide-up: slide-up 0.7s ease-out;
   --animate-bounce-once: bounce-once 0.5s ease;
