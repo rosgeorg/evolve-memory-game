@@ -2,8 +2,6 @@
 
 A small memory card game built with React and Vite.
 
-<br />
-
 ## ✨ Features
 
 - Animated start screen
