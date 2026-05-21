@@ -7,6 +7,7 @@ export function useSoundManager() {
   const bgRef = useRef(null)
   const tickRef = useRef(null)
   const incorrectRef = useRef(null)
+  const correctRef = useRef(null)
 
   useEffect(() => {
     bgRef.current = new Audio('/sounds/background.mp3')
