@@ -1,124 +1,11 @@
-import { useState, useEffect } from 'react'
-import { CARD_TYPES } from '../constants/cards'
-import { shuffle } from '../utils/shuffle'
 import SoundOn from '../components/icons/SoundOn'
 import GameCard from '../components/ui/GameCard'
-import Button from '../components/ui/Button'
+import GameModal from '../components/ui/GameModal'
+import { useMemoryGame } from '../hooks/useMemoryGame'
 
 function GameScreen() {
-  const [timeLeft, setTimeLeft] = useState(30)
-  const [isTimerRunning, setIsTimerRunning] = useState(true)
-  const [cards, setCards] = useState(() => {
-    const deck = [...CARD_TYPES, ...CARD_TYPES]
-    const shuffledDeck = shuffle([...deck])
-
-    return shuffledDeck.map((card, index) => ({
-      ...card,
-      uniqueId: index,
-      isFlipped: false,
-      isMatched: false,
-    }))
-  })
-
-  const [selectedCards, setSelectedCards] = useState([])
-  const [modal, setModal] = useState({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: '',
-  })
-
-  useEffect(() => {
-    if (!isTimerRunning || timeLeft === 0) {
-      return
-    }
-
-    const timerId = setInterval(() => {
-      setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
-    }, 1000)
-
-    return () => clearInterval(timerId)
-  }, [isTimerRunning, timeLeft])
-
-  const handleCardClick = (clickedCard) => {
-    if (
-      modal.isOpen ||
-      clickedCard.isFlipped ||
-      clickedCard.isMatched ||
-      selectedCards.length === 2
-    ) {
-      return
-    }
-
-    const flippedCard = { ...clickedCard, isFlipped: true }
-
-    setCards((prevCards) =>
-      prevCards.map((card) =>
-        card.uniqueId === clickedCard.uniqueId ? flippedCard : card
-      )
-    )
-
-    setSelectedCards((prevSelectedCards) => {
-      const newSelectedCards = [...prevSelectedCards, flippedCard]
-
-      if (newSelectedCards.length === 2) {
-        setIsTimerRunning(false)
-        const [firstCard, secondCard] = newSelectedCards
-
-        if (firstCard.id === secondCard.id) {
-          setCards((prevCards) =>
-            prevCards.map((card) =>
-              card.id === firstCard.id ? { ...card, isMatched: true } : card
-            )
-          )
-
-          setModal({
-            isOpen: true,
-            title: 'Nice!',
-            message: "It's a match.",
-            type: 'success',
-          })
-
-          return []
-        }
-
-        setModal({
-          isOpen: true,
-          title: 'Oops!',
-          message: 'Sorry, but this is not a match.',
-          type: 'error',
-        })
-      }
-
-      return newSelectedCards
-    })
-  }
-
-  const handleCloseModal = () => {
-    if (modal.type === 'error') {
-      const [firstCard, secondCard] = selectedCards
-
-      setCards((prevCards) =>
-        prevCards.map((card) =>
-          card.uniqueId === firstCard.uniqueId ||
-          card.uniqueId === secondCard.uniqueId
-            ? { ...card, isFlipped: false }
-            : card
-        )
-      )
-    }
-
-    setIsTimerRunning(true)
-
-    setSelectedCards([])
-
-    setModal({
-      isOpen: false,
-      title: '',
-      message: '',
-      type: '',
-    })
-  }
+  const { timeLeft, cards, modal, handleCardClick, handleCloseModal } =
+    useMemoryGame()
 
   return (
     <section className="bg-background text-text min-h-screen overflow-hidden px-4 py-6">
@@ -149,23 +36,7 @@ function GameScreen() {
         </div>
       </div>
 
-      {modal.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="bg-modal border-modal-border flex w-full max-w-sm flex-col items-center gap-6 rounded-2xl border p-6 text-center shadow-2xl">
-            <h2 className="text-2xl font-black">{modal.title}</h2>
-
-            <p className="text-muted text-lg">{modal.message}</p>
-
-            <Button
-              onClick={handleCloseModal}
-              variant="secondary"
-              className="w-full"
-            >
-              {modal.type === 'success' ? 'Continue' : 'Try Again'}
-            </Button>
-          </div>
-        </div>
-      )}
+      <GameModal modal={modal} onClose={handleCloseModal} />
     </section>
   )
 }
