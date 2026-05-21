@@ -1,8 +1,18 @@
+import { useEffect } from 'react'
 import { FEEDBACK_MESSAGES } from '../constants/feedbackMessages'
+import { getBestTime } from '../utils/bestTimeStorage'
+import { triggerConfetti } from '../utils/triggerConfetti'
 
-function FinalScreen({ result, onPlayAgain }) {
+function FinalScreen({ result, stars, onPlayAgain }) {
   const isWin = result === 'win'
   const feedback = FEEDBACK_MESSAGES[result]
+  const bestTime = getBestTime()
+
+  useEffect(() => {
+    if (isWin) {
+      triggerConfetti()
+    }
+  }, [isWin])
 
   return (
     <section
@@ -15,6 +25,27 @@ function FinalScreen({ result, onPlayAgain }) {
       </h1>
 
       <p className="max-w-md text-xl font-semibold">{feedback.message}</p>
+
+      {isWin && (
+        <div className="flex gap-2">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <img
+              key={index}
+              src={
+                index < stars ? '/images/star.png' : '/images/starOutline.png'
+              }
+              alt="Star"
+              className="h-14 w-14"
+            />
+          ))}
+        </div>
+      )}
+
+      {isWin && bestTime > 0 && (
+        <p className="text-lg font-semibold text-yellow-200">
+          Best Time: {bestTime}s
+        </p>
+      )}
 
       <button
         onClick={onPlayAgain}

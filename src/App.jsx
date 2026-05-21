@@ -6,10 +6,18 @@ import FinalScreen from './screens/FinalScreen'
 function App() {
   const [screen, setScreen] = useState('start')
   const [result, setResult] = useState(null)
+  const [stars, setStars] = useState(0)
 
-  const handleFinish = (gameResult) => {
+  const handleFinish = (gameResult, earnedStars = 0) => {
     setResult(gameResult)
+    setStars(earnedStars)
     setScreen('finish')
+  }
+
+  const handlePlayAgain = () => {
+    setResult(null)
+    setStars(0)
+    setScreen('game')
   }
 
   return (
@@ -19,7 +27,11 @@ function App() {
       {screen === 'game' && <GameScreen onFinish={handleFinish} />}
 
       {screen === 'finish' && (
-        <FinalScreen result={result} onPlayAgain={() => setScreen('game')} />
+        <FinalScreen
+          result={result}
+          stars={stars}
+          onPlayAgain={handlePlayAgain}
+        />
       )}
     </main>
   )

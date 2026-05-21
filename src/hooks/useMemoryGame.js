@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { CLOSED_MODAL, MODAL_MESSAGES } from '../constants/modalMessages'
 import { createCardsSet } from '../utils/createCardsSet'
 import { useSoundManager } from './useSoundManager'
+import { getStars } from '../utils/getStars'
+import { getBestTime, saveBestTime } from '../utils/bestTimeStorage'
 
 const FLIP_ANIMATION_DURATION = 350
 
@@ -129,7 +131,14 @@ export function useMemoryGame({ onFinish }) {
       if (hasWon) {
         stopTicking()
         stopBackground()
-        onFinish('win')
+
+        const timeUsed = 30 - timeLeft
+        const currentBestTime = getBestTime()
+        if (!currentBestTime || timeUsed < currentBestTime) {
+          saveBestTime(timeUsed)
+        }
+
+        onFinish('win', getStars(timeLeft))
         return []
       }
 
