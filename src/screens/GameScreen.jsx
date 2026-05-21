@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CARD_TYPES } from '../constants/cards'
 import { shuffle } from '../utils/shuffle'
 import SoundOn from '../components/icons/SoundOn'
@@ -6,6 +6,8 @@ import GameCard from '../components/ui/GameCard'
 import Button from '../components/ui/Button'
 
 function GameScreen() {
+  const [timeLeft, setTimeLeft] = useState(30)
+  const [isTimerRunning, setIsTimerRunning] = useState(true)
   const [cards, setCards] = useState(() => {
     const deck = [...CARD_TYPES, ...CARD_TYPES]
     const shuffledDeck = shuffle([...deck])
@@ -25,6 +27,18 @@ function GameScreen() {
     message: '',
     type: '',
   })
+
+  useEffect(() => {
+    if (!isTimerRunning || timeLeft === 0) {
+      return
+    }
+
+    const timerId = setInterval(() => {
+      setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
+    }, 1000)
+
+    return () => clearInterval(timerId)
+  }, [isTimerRunning, timeLeft])
 
   const handleCardClick = (clickedCard) => {
     if (
@@ -48,6 +62,7 @@ function GameScreen() {
       const newSelectedCards = [...prevSelectedCards, flippedCard]
 
       if (newSelectedCards.length === 2) {
+        setIsTimerRunning(false)
         const [firstCard, secondCard] = newSelectedCards
 
         if (firstCard.id === secondCard.id) {
@@ -93,6 +108,8 @@ function GameScreen() {
       )
     }
 
+    setIsTimerRunning(true)
+
     setSelectedCards([])
 
     setModal({
@@ -116,7 +133,7 @@ function GameScreen() {
 
         <div className="text-timer shrink-0 text-center text-2xl font-bold">
           <p className="text-lg">Time Left:</p>
-          <h2 className="text-3xl">30s</h2>
+          <h2 className="text-3xl">{timeLeft}s</h2>
         </div>
 
         <div className="flex min-h-0 flex-1 items-center justify-center">
