@@ -1,11 +1,19 @@
 import SoundOn from '../components/icons/SoundOn'
+import SoundOff from '../components/icons/SoundOff'
 import GameCard from '../components/ui/GameCard'
 import GameModal from '../components/ui/GameModal'
 import { useMemoryGame } from '../hooks/useMemoryGame'
 
 function GameScreen() {
-  const { timeLeft, cards, modal, handleCardClick, handleCloseModal } =
-    useMemoryGame()
+  const {
+    timeLeft,
+    cards,
+    modal,
+    isMuted,
+    toggleMute,
+    handleCardClick,
+    handleCloseModal,
+  } = useMemoryGame()
 
   return (
     <section className="bg-background text-text min-h-screen overflow-hidden px-4 py-6">
@@ -13,8 +21,11 @@ function GameScreen() {
         <header className="flex shrink-0 items-center justify-between">
           <h2 className="text-3xl font-bold tracking-wide">Memory Game</h2>
 
-          <button className="bg-surface hover:bg-surface-2 rounded-xl px-2 py-2 transition">
-            <SoundOn />
+          <button
+            className="bg-surface hover:bg-surface-2 cursor-pointer rounded-xl px-2 py-2 transition"
+            onClick={toggleMute}
+          >
+            {isMuted ? <SoundOn /> : <SoundOff />}
           </button>
         </header>
 

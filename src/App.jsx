@@ -1,19 +1,15 @@
-import { useState } from "react"
-import StartScreen from "./screens/StartScreen"
-import GameScreen from "./screens/GameScreen"
+import { useState } from 'react'
+import StartScreen from './screens/StartScreen'
+import GameScreen from './screens/GameScreen'
 
 function App() {
-  const [screen, setScreen] = useState("start")
+  const [screen, setScreen] = useState('start')
 
   return (
-    <main className="min-h-screen overflow-hidden text-text">
-      {screen === "start" && (
-        <StartScreen onStart={() => setScreen("game")} />
-      )}
-
-      {screen === "game" && (
-       <GameScreen />
-      )}
+    <main className="text-text min-h-screen overflow-hidden">
+      {screen === 'start' && <StartScreen onStart={() => setScreen('game')} />}
+      {screen === 'game' && <GameScreen onFinish={() => setScreen('finish')} />}
+      {screen === 'finish' && <FinishScreen onPlay={() => setScreen('game')} />}
     </main>
   )
 }

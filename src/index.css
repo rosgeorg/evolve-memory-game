@@ -99,6 +99,14 @@
   }
 }
 
+@utility modal-success-glow {
+  box-shadow: 0 0 35px rgba(34, 197, 94, 0.25);
+}
+
+@utility modal-error-glow {
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.25);
+}
+
 .flip-card-inner {
   transform-style: preserve-3d;
   transition: transform 0.5s;

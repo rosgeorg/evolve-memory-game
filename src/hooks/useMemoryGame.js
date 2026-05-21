@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CLOSED_MODAL, MODAL_MESSAGES } from '../constants/modalMessages'
 import { createCardsSet } from '../utils/createCardsSet'
+import { useSoundManager } from './useSoundManager'
 
 export function useMemoryGame() {
   const [timeLeft, setTimeLeft] = useState(30)
@@ -9,8 +10,32 @@ export function useMemoryGame() {
   const [selectedCards, setSelectedCards] = useState([])
   const [modal, setModal] = useState(CLOSED_MODAL)
 
+  const {
+    isMuted,
+    toggleMute,
+    stopBackground,
+    startTicking,
+    stopTicking,
+    playIncorrect,
+  } = useSoundManager()
+
   useEffect(() => {
-    if (!isTimerRunning || timeLeft === 0) return
+    if (timeLeft === 0) {
+      stopTicking()
+      stopBackground()
+
+      return
+    }
+
+    if (!isTimerRunning) {
+      stopTicking()
+
+      return
+    }
+
+    if (timeLeft <= 10) {
+      startTicking()
+    }
 
     const timerId = setInterval(() => {
       setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
@@ -93,6 +118,8 @@ export function useMemoryGame() {
       return []
     }
 
+    playIncorrect()
+
     openErrorModal()
 
     return newSelectedCards
@@ -133,6 +160,8 @@ export function useMemoryGame() {
     timeLeft,
     cards,
     modal,
+    isMuted,
+    toggleMute,
     handleCardClick,
     handleCloseModal,
   }
