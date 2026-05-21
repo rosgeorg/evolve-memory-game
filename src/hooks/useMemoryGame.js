@@ -110,7 +110,7 @@ export function useMemoryGame({ onFinish }) {
 
   const evaluateMatch = (newSelectedCards) => {
     if (newSelectedCards.length < 2) {
-      return newSelectedCards
+      return
     }
 
     stopTimer()
@@ -139,17 +139,17 @@ export function useMemoryGame({ onFinish }) {
         }
 
         onFinish('win', getStars(timeLeft))
-        return []
+        return
       }
 
       openSuccessModal()
-      return []
+      setSelectedCards([])
+      return
     }
 
     //Cards don't match
     playIncorrect()
     openErrorModal()
-    return newSelectedCards
   }
 
   const canFlipCard = (card) => {
@@ -170,11 +170,10 @@ export function useMemoryGame({ onFinish }) {
     const flippedCard = flipCard(clickedCard)
 
     setTimeout(() => {
-      setSelectedCards((prevSelectedCards) => {
-        const newSelectedCards = [...prevSelectedCards, flippedCard]
+      const newSelectedCards = [...selectedCards, flippedCard]
 
-        return evaluateMatch(newSelectedCards)
-      })
+      setSelectedCards(newSelectedCards)
+      evaluateMatch(newSelectedCards)
 
       setIsBoardLocked(false)
     }, FLIP_ANIMATION_DURATION)
