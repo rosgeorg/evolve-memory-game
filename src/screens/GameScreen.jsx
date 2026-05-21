@@ -4,7 +4,7 @@ import GameCard from '../components/ui/GameCard'
 import GameModal from '../components/ui/GameModal'
 import { useMemoryGame } from '../hooks/useMemoryGame'
 
-function GameScreen() {
+function GameScreen({ onFinish }) {
   const {
     timeLeft,
     cards,
@@ -13,11 +13,11 @@ function GameScreen() {
     toggleMute,
     handleCardClick,
     handleCloseModal,
-  } = useMemoryGame()
+  } = useMemoryGame({ onFinish })
 
   return (
     <section className="bg-background text-text min-h-screen overflow-hidden px-4 py-6">
-      <div className="mx-auto flex h-[calc(100svh-3rem)] max-w-3xl flex-col gap-6">
+      <div className="mx-auto flex h-[calc(100svh-3rem)] flex-col gap-6">
         <header className="flex shrink-0 items-center justify-between">
           <h2 className="text-3xl font-bold tracking-wide">Memory Game</h2>
 
@@ -35,7 +35,7 @@ function GameScreen() {
         </div>
 
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <div className="grid h-full grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          <div className="grid h-full grid-cols-2 gap-3 md:h-1/2 md:grid-cols-4 md:gap-4 lg:h-3/4">
             {cards.map((card) => (
               <GameCard
                 key={card.uniqueId}

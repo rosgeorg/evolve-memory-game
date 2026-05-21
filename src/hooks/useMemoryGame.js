@@ -3,12 +3,15 @@ import { CLOSED_MODAL, MODAL_MESSAGES } from '../constants/modalMessages'
 import { createCardsSet } from '../utils/createCardsSet'
 import { useSoundManager } from './useSoundManager'
 
-export function useMemoryGame() {
+const FLIP_ANIMATION_DURATION = 350
+
+export function useMemoryGame({ onFinish }) {
   const [timeLeft, setTimeLeft] = useState(30)
   const [isTimerRunning, setIsTimerRunning] = useState(true)
   const [cards, setCards] = useState(createCardsSet)
   const [selectedCards, setSelectedCards] = useState([])
   const [modal, setModal] = useState(CLOSED_MODAL)
+  const [isBoardLocked, setIsBoardLocked] = useState(false)
 
   const {
     isMuted,
@@ -17,22 +20,23 @@ export function useMemoryGame() {
     startTicking,
     stopTicking,
     playIncorrect,
+    playCorrect,
   } = useSoundManager()
 
   useEffect(() => {
     if (timeLeft === 0) {
       stopTicking()
       stopBackground()
-
+      onFinish('lose')
       return
     }
 
     if (!isTimerRunning) {
       stopTicking()
-
       return
     }
 
+    // Start ticking sound at 10s to signal urgency to the player
     if (timeLeft <= 10) {
       startTicking()
     }
@@ -42,7 +46,7 @@ export function useMemoryGame() {
     }, 1000)
 
     return () => clearInterval(timerId)
-  }, [isTimerRunning, timeLeft])
+  }, [isTimerRunning, timeLeft, onFinish])
 
   const startTimer = () => {
     setIsTimerRunning(true)
@@ -102,7 +106,7 @@ export function useMemoryGame() {
     return flippedCard
   }
 
-  const processSelectedCards = (newSelectedCards) => {
+  const evaluateMatch = (newSelectedCards) => {
     if (newSelectedCards.length < 2) {
       return newSelectedCards
     }
@@ -111,22 +115,37 @@ export function useMemoryGame() {
 
     const [firstCard, secondCard] = newSelectedCards
 
+    //Cards match
     if (firstCard.id === secondCard.id) {
-      markCardsAsMatched(firstCard.id)
-      openSuccessModal()
+      const hasWon = cards
+        .map((card) =>
+          card.id === firstCard.id ? { ...card, isMatched: true } : card
+        )
+        .every((card) => card.isMatched)
 
+      markCardsAsMatched(firstCard.id)
+      playCorrect()
+
+      if (hasWon) {
+        stopTicking()
+        stopBackground()
+        onFinish('win')
+        return []
+      }
+
+      openSuccessModal()
       return []
     }
 
+    //Cards don't match
     playIncorrect()
-
     openErrorModal()
-
     return newSelectedCards
   }
 
   const canFlipCard = (card) => {
     return (
+      !isBoardLocked &&
       !modal.isOpen &&
       !card.isFlipped &&
       !card.isMatched &&
@@ -137,13 +156,19 @@ export function useMemoryGame() {
   const handleCardClick = (clickedCard) => {
     if (!canFlipCard(clickedCard)) return
 
+    setIsBoardLocked(true)
+
     const flippedCard = flipCard(clickedCard)
 
-    setSelectedCards((prevSelectedCards) => {
-      const newSelectedCards = [...prevSelectedCards, flippedCard]
+    setTimeout(() => {
+      setSelectedCards((prevSelectedCards) => {
+        const newSelectedCards = [...prevSelectedCards, flippedCard]
 
-      return processSelectedCards(newSelectedCards)
-    })
+        return evaluateMatch(newSelectedCards)
+      })
+
+      setIsBoardLocked(false)
+    }, FLIP_ANIMATION_DURATION)
   }
 
   const handleCloseModal = () => {
